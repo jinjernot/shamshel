@@ -27,7 +27,7 @@ def searchTags(root):
             if i not in tags:
                 missing_elements.append(i)
         df = pd.DataFrame({"XML Missing": missing_elements})
-        print(df)
+        print(df.to_string(index=False))
 
     elif product_type["pmoid"] == "18972": # Printers
         print("Este SKU es de la jerarquia: " + product_type["name"])
@@ -38,7 +38,7 @@ def searchTags(root):
             if i not in tags:
                 missing_elements.append(i)
         df = pd.DataFrame({"XML Missing": missing_elements})
-        print(df)
+        print(df.to_string(index=False))
 
     elif product_type["pmoid"] == "321957": # Laptops
         print("Este SKU es de la jerarquia: " + product_type["name"])
@@ -49,7 +49,7 @@ def searchTags(root):
             if i not in tags:
                 missing_elements.append(i)
         df = pd.DataFrame({"XML Missing": missing_elements})
-        print(df)
+        print(df.to_string(index=False))
 
 def main():
     print("Bienvenido a Predator-Mutator")
