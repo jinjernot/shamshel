@@ -1,43 +1,59 @@
 import xml.etree.ElementTree as ET
 from lxml import etree
-import requests
+import glob
+import pandas as pd
 
 def fromFile():
-
     parser = etree.XMLParser(recover=True)
-    tree = ET.parse('./XML/test.xml', parser)
-    root = tree.getroot()
-    searchTags(root)
+    folder_path = "./XML/"
+    xml_files = glob.glob(folder_path + "*.xml")
 
-def fromURL():
-    #testURL https://cap.corp.hp.com/capui/productFileOpen.action?path=/var/opt/cap-out/xmlfiles/fullload/ww-en/021015xxxxxx/021015649xxx/2101564959.xml
-    url= input("pega la URL del CAP file: ")
-    response = requests.get(url, verify=False)
-    xml_content = response.content
-    root = ET.fromstring(xml_content)
-    searchTags(root)
+    for xml_file in xml_files:
+        tree = ET.parse(xml_file, parser)
+        root = tree.getroot()
+        searchTags(root)
 
 def searchTags(root):
     tags = [elem.tag for elem in root.iter()]
-    mandatory_tags = ["verga","osinstalled", "ioports", "processor", "chipset","image"]
-    missing_elements = []
-    for i in mandatory_tags:
-        if i not in tags:
-            missing_elements.append(i)
+    product_type = root.find("./hierarchy/product_type").attrib
+    sku_number = root.find("./content/system/product_numbers/prodnum").text
+    
+    if product_type["pmoid"] == "12454": # Desktops & Workstations
+        print("Este SKU es de la jerarquia: " + product_type["name"])
+        print(sku_number + ":")
+        mandatory_tags = ["osinstalled", "ioports", "processor", "chipset","image"]
+        missing_elements = []
+        for i in mandatory_tags:
+            if i not in tags:
+                missing_elements.append(i)
+        df = pd.DataFrame({"XML Missing": missing_elements})
+        print(df)
 
-    print(missing_elements)
+    elif product_type["pmoid"] == "18972": # Printers
+        print("Este SKU es de la jerarquia: " + product_type["name"])
+        print(sku_number + ":")
+        mandatory_tags = ["osinstalled", "ioports", "processor", "chipset","image"]
+        missing_elements = []
+        for i in mandatory_tags:
+            if i not in tags:
+                missing_elements.append(i)
+        df = pd.DataFrame({"XML Missing": missing_elements})
+        print(df)
+
+    elif product_type["pmoid"] == "321957": # Laptops
+        print("Este SKU es de la jerarquia: " + product_type["name"])
+        print(sku_number + ":")
+        mandatory_tags = ["batterylife","batteryrechrg","batterytype","batteryweightimp","batteryweightmet","cdromdvd","cloudserv","dispdescmetshort","dispdescshort","display","displaybright","displaycolorgamut","displaymet","displaysize","displaysizemet","ecohighlighgraphic","energyeffcomp","filter_processorspd","filter_storagetype","fingerprread","flashcache","flashcachenote","gcformfactor","gcnote","graphicseg_01card_01","graphicseg_01header","graphicseg_02card_01","graphicseg_02header","hd_01des","hd_02des","keybrd","maxbatterylifevideo","memlayout","memstdes_01","memstdnote","memstosimp","mousepntgdevice","osinstalled","osinstallednote","powersupplytype","processorcache","processorcoreinstalled","processorfamily","processorname","prodfinish","productcolour","storage_acceleration","swincluded","swpreinstalled","swprodfinance","webcam","wirelesstech"]
+        missing_elements = []
+        for i in mandatory_tags:
+            if i not in tags:
+                missing_elements.append(i)
+        df = pd.DataFrame({"XML Missing": missing_elements})
+        print(df)
 
 def main():
     print("Bienvenido a Predator-Mutator")
-    user_input = input("1 para file, 2 para URL ")
-    x = int(user_input)
-
-    if x == 1:
-        print("elegiste 1, leyendo el xml local...")
-        fromFile()
-    elif x == 2:
-        print("elegiste 2, leyendo el xml desde URL...")
-        fromURL()
+    fromFile()
 
 if __name__ == "__main__":
     main()
