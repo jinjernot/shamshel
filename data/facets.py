@@ -1,0 +1,1 @@
+facets = ["facet_prodcat","facet_segment","facet_usage","facet_subcategory","facet_subbrand","facet_seriesname","facet_prodtype","facet_formfactor","facet_os","facet_processorgen","facet_processortype","facet_memstd","facet_cap","facet_weightus","facet_feat"]
