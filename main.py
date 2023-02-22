@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from lxml import etree
 import glob
 import pandas as pd
+from data.techspecs import desktops_ts
 
 def fromFile():
     parser = etree.XMLParser(recover=True)
