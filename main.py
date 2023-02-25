@@ -33,7 +33,10 @@ def searchTags(root, csv_path, xml_file):
                 missing_elements.append(i)
         DesktopDF = pd.DataFrame({"XML Missing": missing_elements})
         print(DesktopDF.to_string(index=False))
+        print(xml_file)
         csv_filename = os.path.splitext(xml_file)[0] + ".csv"
+        xml_file = xml_file.replace("./XML", "")
+        print(xml_file)
         DesktopDF.to_csv(os.path.join(csv_path, csv_filename), index=False)
 
     elif product_type["pmoid"] == "18972": # Printers
