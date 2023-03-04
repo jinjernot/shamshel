@@ -10,11 +10,14 @@ def fromFile():
     folder_path = "./XML/"
     csv_path = "./csv"
     xml_files = glob.glob(folder_path + "*.xml")
+    mainDF= pd.DataFrame(columns=["XML Tags Missing"])
+    mainDF.to_csv("chida.csv", index=False)
 
     for xml_file in xml_files: #loop through all the files
         tree = ET.parse(xml_file, parser)
         root = tree.getroot()
-        searchTags(root, csv_path, xml_file)
+        searchTags(root, csv_path, xml_file,mainDF)
+        imgs(root, csv_path, xml_file)
     
     dfs = []
     for filename in os.listdir(csv_path): #loop through all the csvs
@@ -25,7 +28,7 @@ def fromFile():
     concat_df = pd.concat(dfs, axis=1)
     concat_df.to_csv('missing_content.csv', index=False)
 
-def searchTags(root, csv_path, xml_file):
+def searchTags(root, csv_path, xml_file,mainDF):
     """Search for mandatory tags"""
     tags = [elem.tag for elem in root.iter()] #get all tags
     product_type = root.find("./hierarchy/product_type").attrib #look for product type to get the ID
@@ -80,13 +83,37 @@ def searchTags(root, csv_path, xml_file):
         LaptopDF.loc[-1] = new_row
         LaptopDF.index = LaptopDF.index + 1
         LaptopDF = LaptopDF.sort_index()
-        csv_filename = os.path.splitext(xml_file)[0] + ".csv"
-        csv_filename = csv_filename.replace("./XML/","")
-        LaptopDF.to_csv(os.path.join(csv_path, csv_filename), index=False)
+        print(LaptopDF)
+        LaptopDF.to_csv("chida.csv", mode= "a", header=False, index=False)
+        
+
+
+      #  csv_filename = os.path.splitext(xml_file)[0] + ".csv"
+       # csv_filename = csv_filename.replace("./XML/","")
+      #  LaptopDF.to_csv(os.path.join(csv_path, csv_filename), index=False)
+
+def imgs(root, csv_path, xml_file):
+    print("Images")
+    images = []
+
+    for tag in root.findall('.//image'):
+        values = []
+        for child in tag:
+            values.append(child.text)
+        images.append(values)
+    df = pd.DataFrame(images, columns=["index","dpi_resolution","image_url_http","pixel_width","content_type","color","full_title","action","document_type","pixel_height","master_object_name","file_name","document_type_detail","background","cmg_acronym","image_url_https","orientation",""], index=None)
+    #delete_cols = ["index","dpi_resolution","image_url_http","pixel_width","content_type","color","full_title","action","document_type","pixel_height","master_object_name","file_name","document_type_detail","background","cmg_acronym"]
+    #df = df.drop(columns=delete_cols)
+
+    csv_filename = os.path.splitext(xml_file)[0] + ".csv"
+    csv_filename = csv_filename.replace("./XML/","")
+    df.to_csv(os.path.join(csv_path, csv_filename), index=False)
 
 def main():
     print("Bienvenido a Predator-Mutator")
     fromFile()
+    
+
 
 if __name__ == "__main__":
     main()
