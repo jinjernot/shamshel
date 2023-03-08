@@ -10,25 +10,17 @@ def fromFile():
     folder_path = "./XML/"
     csv_path = "./csv"
     xml_files = glob.glob(folder_path + "*.xml")
-    mainDF= pd.DataFrame(columns=["XML Tags Missing"])
+    mainDF = pd.DataFrame(columns=["ando viendo como quitar este columna lol"])
     mainDF.to_csv("chida.csv", index=False)
 
     for xml_file in xml_files: #loop through all the files
         tree = ET.parse(xml_file, parser)
         root = tree.getroot()
-        searchTags(root, csv_path, xml_file,mainDF)
-        imgs(root, csv_path, xml_file)
-    
-    dfs = []
-    for filename in os.listdir(csv_path): #loop through all the csvs
-        if filename.endswith('.csv'):
-            filepath = os.path.join(csv_path, filename)
-            df = pd.read_csv(filepath)
-            dfs.append(df)
-    concat_df = pd.concat(dfs, axis=1)
-    concat_df.to_csv('missing_content.csv', index=False)
+        searchTags(root)
+        #imgs(root, csv_path, xml_file)
 
-def searchTags(root, csv_path, xml_file,mainDF):
+
+def searchTags(root):
     """Search for mandatory tags"""
     tags = [elem.tag for elem in root.iter()] #get all tags
     product_type = root.find("./hierarchy/product_type").attrib #look for product type to get the ID
@@ -47,10 +39,10 @@ def searchTags(root, csv_path, xml_file,mainDF):
         DesktopDF.loc[-1] = new_row
         DesktopDF.index = DesktopDF.index + 1
         DesktopDF = DesktopDF.sort_index()
+        mainDF = pd.read_csv("chida.csv")
+        updated_df= pd.concat([mainDF, DesktopDF], axis=1)
+        updated_df.to_csv('chida.csv', index=False)
 
-        csv_filename = os.path.splitext(xml_file)[0] + ".csv"
-        csv_filename = csv_filename.replace("./XML/","")
-        DesktopDF.to_csv(os.path.join(csv_path, csv_filename), index=False)
 
     elif product_type["pmoid"] == "18972": # Printers
         print("This SKU is from Hierarchy: " + product_type["name"])
@@ -65,10 +57,9 @@ def searchTags(root, csv_path, xml_file,mainDF):
         PrintDF.loc[-1] = new_row
         PrintDF.index = PrintDF.index + 1
         PrintDF = PrintDF.sort_index()
-
-        csv_filename = os.path.splitext(xml_file)[0] + ".csv"
-        csv_filename = csv_filename.replace("./XML/","")
-        PrintDF.to_csv(os.path.join(csv_path, csv_filename), index=False)
+        mainDF = pd.read_csv("chida.csv")
+        updated_df= pd.concat([mainDF, PrintDF], axis=1)
+        updated_df.to_csv('chida.csv', index=False)
 
     elif product_type["pmoid"] == "321957": # Laptops
         print("This SKU is from Hierarchy: " + product_type["name"])
@@ -83,14 +74,9 @@ def searchTags(root, csv_path, xml_file,mainDF):
         LaptopDF.loc[-1] = new_row
         LaptopDF.index = LaptopDF.index + 1
         LaptopDF = LaptopDF.sort_index()
-        print(LaptopDF)
-        LaptopDF.to_csv("chida.csv", mode= "a", header=False, index=False)
-        
-
-
-      #  csv_filename = os.path.splitext(xml_file)[0] + ".csv"
-       # csv_filename = csv_filename.replace("./XML/","")
-      #  LaptopDF.to_csv(os.path.join(csv_path, csv_filename), index=False)
+        mainDF = pd.read_csv("chida.csv")
+        updated_df= pd.concat([mainDF, LaptopDF], axis=1)
+        updated_df.to_csv('chida.csv', index=False)
 
 def imgs(root, csv_path, xml_file):
     print("Images")
