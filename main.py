@@ -88,12 +88,13 @@ def imgs(root):
         for child in tag:
             values.append(child.text)
         images.append(values)
-    df = pd.DataFrame(images, columns=["index","dpi_resolution","image_url_http","pixel_width","content_type","color","full_title","action","document_type","pixel_height","master_object_name","file_name","document_type_detail","background","cmg_acronym","image_url_https","orientation",""])
+    imageDF = pd.DataFrame(images, columns=["ranking","dpi_resolution","image_url_http","pixel_width","content_type","color","full_title","action","document_type","pixel_height","master_object_name","file_name","document_type_detail","background","cmg_acronym","image_url_https","orientation","asd"])
     #delete_cols = ["index","dpi_resolution","image_url_http","pixel_width","content_type","color","full_title","action","document_type","pixel_height","master_object_name","file_name","document_type_detail","background","cmg_acronym"]
     #df = df.drop(columns=delete_cols)
+    print(imageDF)
 
-    writer = pd.ExcelWriter("final.xlsx")
-    df.to_excel(writer, sheet_name="vergas")
+    #writer = pd.ExcelWriter("final.xlsx", engine="xlsxwriter",)
+    imageDF.to_csv("oli.csv", index=False)
 
 def main():
     print("Bienvenido a Predator-Mutator")
