@@ -1,4 +1,4 @@
-# predator-mutator
+# shamshel
 
 I'm tired of looking at XMLs, so i automate this task.
 
