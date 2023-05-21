@@ -14,10 +14,15 @@ def fromFile():
     mainDF.to_csv("chida.csv", index=False)
 
     for xml_file in xml_files: #loop through all the files
-        tree = ET.parse(xml_file, parser)
-        root = tree.getroot()
-        searchTags(root)
-        imgs(root)
+        try:
+            tree = ET.parse(xml_file, parser)
+            root = tree.getroot()
+            searchTags(root)
+            imgs(root)
+            
+        except Exception as e:
+            # Print the error message
+            print(e)
 
 
 def searchTags(root):
@@ -97,7 +102,7 @@ def imgs(root):
     imageDF.to_csv("oli.csv", index=False)
 
 def main():
-    print("Bienvenido a Predator-Mutator")
+    print("Bienvenido a Shamshel")
     fromFile()
 
 if __name__ == "__main__":
