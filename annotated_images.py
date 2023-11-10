@@ -3,8 +3,8 @@ import xml.etree.ElementTree as ET
 
 
 xml_files = [file for file in os.listdir() if file.endswith(".xml")]
-image_width = 300
-image_height = 300
+image_width = 500
+image_height = 500
 
 for xml_file_name in xml_files:
     # Define the HTML file name based on the XML file name
@@ -34,7 +34,7 @@ for xml_file_name in xml_files:
 
         for data in image_data:
             html_file.write(f"<p>Asset ID: {data['asset_id']}</p>\n")
-            html_file.write(f"<img src={data['url']}' alt='Image' width='{image_width}' height='{image_height}'>\n")
+            html_file.write(f"<img src={data['url']} alt='Image' width='{image_width}' height='{image_height}'>\n")
 
         html_file.write("</body>\n")
         html_file.write("</html>\n")
