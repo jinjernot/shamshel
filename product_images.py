@@ -13,7 +13,7 @@ image_height = 500
 for xml_file_name in xml_files:
     # Define the corresponding HTML file name based on the XML file name
     html_file_name = os.path.splitext(xml_file_name)[0] + ".html"
-    
+
     # Try to parse the XML file and get the root element
     try:
         tree = ET.parse(xml_file_name)
@@ -27,19 +27,19 @@ for xml_file_name in xml_files:
     # Create an empty list
     image_data = []
 
-    # Loop through all 'asset' element in the XML
-    for asset_element in root.findall(".//asset"):
-        asset_embed_code_element = asset_element.find("asset_embed_code")
-        asset_id_element = asset_element.find("asset_id")
+    # Loop through all 'image' elements in the XML file
+    for asset_element in root.findall(".//image"):
+        asset_embed_code_element = asset_element.find("image_url_https")
+        asset_id_element = asset_element.find("file_name")
 
-        # Check if 'asset_embed_code' element is present
+        # Check if the 'image_url_https' element is present
         if asset_embed_code_element is not None:
             image_url = asset_embed_code_element.text.strip()
 
             # If the URL is not empty, get the asset ID and add the data to the list
             if image_url:
                 asset_id = asset_id_element.text.strip() if asset_id_element is not None else ""
-                image_data.append({"url": image_url, "asset_id": asset_id})
+                image_data.append({"url": image_url, "image_url_https": asset_id})
 
     # Create and write the HTML file with the collected image data
     with open(html_file_name, 'w') as html_file:
@@ -48,7 +48,7 @@ for xml_file_name in xml_files:
 
         # Loop through the collected image data and write HTML tags for each image
         for data in image_data:
-            html_file.write(f"<p>Asset ID: {data['asset_id']}</p>\n")
+            html_file.write(f"<p>URL: {data['url']}</p>\n")
             html_file.write(f"<img src={data['url']} alt='Image' width='{image_width}' height='{image_height}'>\n")
 
         html_file.write("</body>\n")
