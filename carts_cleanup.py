@@ -26,7 +26,7 @@ for xml_file_name in xml_files:
     # Create an empty list
     image_data = []
 
-    #  Get the prodnum
+    # Get the prodnum
     prodnum_element = root.find(".//product_numbers/prodnum")
     prodnum = prodnum_element.text.strip() if prodnum_element is not None else ""
 
@@ -41,8 +41,9 @@ for xml_file_name in xml_files:
         content_type_element = asset_element.find("content_type")
         document_type_detail_element = asset_element.find("document_type_detail")
         cmg_acronym_element = asset_element.find("cmg_acronym")
+        color_element = asset_element.find("color")
 
-        # Check if'image_url_https' and 'product image' is available
+        # Check if 'image_url_https' and 'product image' is available
         if asset_embed_code_element is not None and document_type_detail_element is not None:
             image_url = asset_embed_code_element.text.strip()
             document_type_detail = document_type_detail_element.text.strip()
@@ -55,6 +56,7 @@ for xml_file_name in xml_files:
                 pixel_width = pixel_width_element.text.strip() if pixel_width_element is not None else ""
                 content_type = content_type_element.text.strip() if content_type_element is not None else ""
                 cmg_acronym = cmg_acronym_element.text.strip() if cmg_acronym_element is not None else ""
+                color = color_element.text.strip() if color_element is not None else ""
 
                 image_data.append({
                     "prodnum": prodnum,
@@ -65,7 +67,8 @@ for xml_file_name in xml_files:
                     "pixel_width": pixel_width,
                     "content_type": content_type,
                     "document_type_detail": document_type_detail,
-                    "cmg_acronym": cmg_acronym
+                    "cmg_acronym": cmg_acronym,
+                    "color": color
                 })
 
                 # Append data to the list
@@ -78,10 +81,11 @@ for xml_file_name in xml_files:
                     "pixel_width": pixel_width,
                     "content_type": content_type,
                     "document_type_detail": document_type_detail,
-                    "cmg_acronym": cmg_acronym
+                    "cmg_acronym": cmg_acronym,
+                    "color": color
                 })
 
-    # Create the html
+    # Create the HTML
     with open(html_file_name, 'w') as html_file:
         html_file.write("<html>\n")
         html_file.write("<body>\n")
@@ -97,19 +101,20 @@ for xml_file_name in xml_files:
             html_file.write(f"<p>Content Type: {data['content_type']}</p>\n")
             html_file.write(f"<p>Document Type Detail: {data['document_type_detail']}</p>\n")
             html_file.write(f"<p>CMG Acronym: {data['cmg_acronym']}</p>\n")
+            html_file.write(f"<p>Color: {data['color']}</p>\n")
         html_file.write("</body>\n")
         html_file.write("</html>\n")
 
-# Create a df from the image data
+# Create a DataFrame from the image data
 df = pd.DataFrame(all_image_data)
 
 # Identify duplicate rows
-duplicates = df.duplicated(subset=["prodnum", "orientation", "pixel_height", "content_type", "cmg_acronym"], keep=False)
+duplicates = df.duplicated(subset=["prodnum", "orientation", "pixel_height", "content_type", "cmg_acronym", "color"], keep=False)
 
 # Add a new column "note" and set it to "duplicate" for duplicate rows
 df['note'] = ''
 df.loc[duplicates, 'note'] = 'duplicate'
 
-# Save the df to an Excel file
+# Save the DataFrame to an Excel file
 excel_file_name = "extracted_image_data.xlsx"
 df.to_excel(excel_file_name, index=False)
